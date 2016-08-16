@@ -1,7 +1,21 @@
 version: '2'
 services:
+  torproxy:
+    image: jess/tor-proxy
+    expose:
+      - "9050"
+    restart: "always"
+  privoxy:
+    image: jess/privoxy
+    links:
+      - torproxy
+    expose:
+      - "8118"
   bot1-pokego:
     build: .
+    environment:
+      - HTTPS_PROXY=privoxy:8118
+      - HTTP_PROXY=privoxy:8118
     volumes:
      - ./configs:/usr/src/app/configs
      - ./web:/usr/src/app/web
